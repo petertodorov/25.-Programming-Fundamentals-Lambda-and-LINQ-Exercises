@@ -1,0 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+class ShoppoingSpree
+{
+    static Dictionary<string, decimal> productPriceList = new Dictionary<string, decimal>();
+    static void Main(string[] args)
+    {
+        decimal totalBudget = decimal.Parse(Console.ReadLine());
+        while (true)
+        {
+            string[] input = Console.ReadLine().Split(' ');
+            if (input[0] != "end")
+            {
+                string product = input[0];
+                decimal price = decimal.Parse(input[1]);
+                productPriceList = SetProductPrices(product, price);
+            }
+            else
+            {
+                break;
+            }
+        }
+        decimal allProductsPrice = productPriceList.Values.Sum();
+        if (allProductsPrice>totalBudget)
+        {
+            Console.WriteLine("Need more money... Just buy banichka");
+        }
+        else 
+        {
+            foreach (var item in productPriceList.OrderByDescending(p =>p.Value).ThenBy(prod =>prod.Key.Length))
+            {
+                Console.WriteLine($"{item.Key} costs {item.Value:F2}");
+            }
+        }
+    }
+    private static Dictionary<string, decimal> SetProductPrices(string product, decimal price)
+    {
+        if (!productPriceList.ContainsKey(product))
+        {
+            productPriceList.Add(product, price);
+        }
+        else if (productPriceList.ContainsKey(product))
+        {
+            if (productPriceList[product] > price)
+            {
+                productPriceList[product] = price;
+            }
+        }
+        return productPriceList;
+    }
+}
