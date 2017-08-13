@@ -1,0 +1,31 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+class RegisteredUsers
+{
+    static void Main(string[] args)
+    {
+        Dictionary<string, DateTime> users = new Dictionary<string, DateTime>();
+        while (true)
+        {
+            string[] input = Console.ReadLine().Split(new string[] { " -> " }, StringSplitOptions.RemoveEmptyEntries);
+            if (input[0] == "end")
+            {
+                break;
+            }
+            else
+            {
+                string name = input[0];
+                DateTime date = DateTime.ParseExact(input[1],"dd/MM/yyyy",CultureInfo.InvariantCulture);
+                users.Add(name, date);
+            }
+        }
+        foreach (var item in users.Reverse().OrderBy(s => s.Value).Take(5).OrderByDescending(x => x.Value))
+        {
+            Console.WriteLine(item.Key);
+        }
+    }
+}
