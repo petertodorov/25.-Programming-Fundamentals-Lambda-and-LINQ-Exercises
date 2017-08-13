@@ -1,0 +1,57 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+class DefaultValues
+{
+    static void Main(string[] args)
+    {
+        Dictionary<string, string> allValues = new Dictionary<string, string>();
+        while (true)
+        {
+            string[] input = Console.ReadLine().Split(new string[] { " -> " }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (input[0]!="end")
+            {
+                string key = input[0];
+                string value = input[1];
+                if (!allValues.ContainsKey(key))
+                {
+                allValues.Add(key,string.Empty);
+                }
+                allValues[key] = value;
+            }
+            else
+            {
+                break;
+            }
+        }
+        Dictionary<string, string> modifiedValues = new Dictionary<string, string>(); 
+        string defaultValue = Console.ReadLine();
+        foreach (var item in allValues)
+        {
+            if (item.Value =="null")
+            {
+                modifiedValues.Add(item.Key, defaultValue);
+            }
+        }
+        Dictionary<string, string> toPrintNoChange = new Dictionary<string, string>();
+        foreach (var item in allValues)
+        {
+            if (item.Value!="null")
+            {
+                toPrintNoChange.Add(item.Key, item.Value);
+            }
+        }
+        foreach (var item in toPrintNoChange.OrderByDescending(v=>v.Value.Length))
+        {
+            Console.WriteLine($"{item.Key} <-> {item.Value}");
+        }
+        foreach (var item in modifiedValues)
+        {
+            Console.WriteLine($"{item.Key} <-> {item.Value}");
+        }
+    }
+}
