@@ -1,0 +1,79 @@
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+class CottageScraper
+{
+    static void Main(string[] args)
+    {
+        Dictionary<string, List<int>> allLogs = new Dictionary<string, List<int>>();
+        Dictionary<string, List<int>> usedLogs = new Dictionary<string, List<int>>();
+        Dictionary<string, List<int>> unusedLogs = new Dictionary<string, List<int>>();
+        while (true)
+        {
+            string[] input = Console.ReadLine().Split(new string[] {" -> "},StringSplitOptions.RemoveEmptyEntries);
+            if (!input.Contains ("chop chop"))
+            {
+                if (!allLogs.ContainsKey(input[0]))
+                {
+                    allLogs.Add(input[0], new List<int>());
+                }
+                allLogs[input[0]].Add(int.Parse(input[1]));
+            }
+            else
+            {
+                break;
+            }
+        }
+        string typeToUse = Console.ReadLine();
+        int minHeight = int.Parse(Console.ReadLine());
+
+        foreach (var item in allLogs.Where(x => x.Key == typeToUse))
+        {
+            usedLogs.Add(item.Key, new List<int>());
+            usedLogs[item.Key].AddRange(item.Value.Where(x => x >= minHeight).ToList());
+        }
+
+        foreach (var item in allLogs.Where(x => x.Key == typeToUse))
+        {
+            unusedLogs.Add(item.Key, new List<int>());
+            unusedLogs[item.Key].AddRange(item.Value.Where(x => x < minHeight).ToList());
+            
+        }
+        foreach (var item in allLogs.Where(x => x.Key != typeToUse))
+        {
+            unusedLogs.Add(item.Key, new List<int>());
+            unusedLogs[item.Key].AddRange(item.Value);
+        }
+        int sum = new int();
+        int counter = 0;
+        foreach (var item in allLogs.Values)
+        {
+           sum+= item.Sum();
+            counter += item.Count();
+        };
+        
+        double pricePerMeter = Math.Round((double)sum / (double)counter,2);
+        int sumUsed = 0;
+        int sumUnused = 0;
+
+        foreach (var item in usedLogs)
+        {
+            sumUsed += item.Value.Sum();
+        }
+        foreach (var item in unusedLogs)
+        {
+            sumUnused += item.Value.Sum();
+        }
+        Console.WriteLine($"Price per meter: ${pricePerMeter:F2}");
+        Console.WriteLine($"Used logs price: ${sumUsed*pricePerMeter:F2}");
+        Console.WriteLine($"Unused logs price: ${sumUnused*pricePerMeter*0.25D:F2}");
+        Console.WriteLine($"CottageScraper subtotal: ${(sumUsed * pricePerMeter)+(sumUnused * pricePerMeter * 0.25D):F2}");
+
+
+    }
+}
