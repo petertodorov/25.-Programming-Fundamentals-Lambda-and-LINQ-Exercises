@@ -1,0 +1,77 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+class FlattenDictionary
+{
+    static void Main()
+    {
+        Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>>();
+        Dictionary<string, List<string>> flattenedData = new Dictionary<string, List<string>>();
+        string input = Console.ReadLine();
+        while (input!="end")
+        {
+            string[] inputTokens = input.Split(' ');
+
+            if (inputTokens[0] == "flatten")
+            {
+                string keyToFlatten = inputTokens[1];
+                
+                foreach (var record in data)
+                {
+                    string key = record.Key;
+                    if (key == keyToFlatten)
+                    {
+                        Dictionary<string, string> innerRecords = record.Value;
+                        foreach (var innerRecord in innerRecords)
+                        {
+                            string flattenedValue = innerRecord.Key + innerRecord.Value;
+                            if (!flattenedData.ContainsKey(key))
+                            {
+                                flattenedData.Add(key, new List<string>());
+                            }
+                            flattenedData[key].Add(flattenedValue);
+                        }
+                    }
+                }
+                data[keyToFlatten].Clear();
+            }
+            else
+            {
+                string key = inputTokens[0];
+                string innerKey = inputTokens[1];
+                string innerValue = inputTokens[2];
+                if (!data.ContainsKey(key))
+                {
+                    data.Add(key, new Dictionary<string, string>());
+                }
+                data[key][innerKey] = innerValue;
+            }
+            input = Console.ReadLine();
+        }
+        int counter = 1;
+        foreach (var record in data.OrderByDescending(r=>r.Key.Length))
+        {
+            string key = record.Key;
+            Dictionary<string, string> innerRecords = record.Value;
+            Console.WriteLine($"{key}");
+            foreach (var innerRecord in innerRecords.OrderBy(i=>i.Key.Length))
+            {
+                Console.WriteLine($"{counter}. {innerRecord.Key} - {innerRecord.Value}");
+                counter++;
+            }
+            if (flattenedData.ContainsKey(key))
+            {
+                foreach (var item in flattenedData[key])
+                {
+                    Console.WriteLine($"{counter}. {String.Join("", item)}");
+                    counter++;
+                }
+            }
+            counter = 1;
+        }
+    }
+}   
